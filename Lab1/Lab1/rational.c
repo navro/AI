@@ -3,7 +3,7 @@
 //  Lab1
 //
 //  Created by Magnus Wallgren on 2016-04-01.
-//  Copyright © 2016 Magnus Wallgren. All rights reserved.
+//  Copyright © 2016 Magnus Wallgren & Jakob Navrozidis. All rights reserved.
 //
 #include <stdio.h>
 #include <math.h>
