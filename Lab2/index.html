@@ -1,0 +1,174 @@
+<html>
+<h2>The GNU Debugger GDB</h2>
+
+<em>The purpose of this lab is to make you familiar with the GNU debugger GDB</em>
+<ol>
+<li>Download the file 
+ <a href="lab2.tar">lab2.tar</a>
+and unpack it (by typing <b>tar xvf lab2.tar</b>)<br><br>
+
+<li>Basic GDB Commands.
+<br><br>
+Compile the program <tt>sum.c</tt> using the command: <b>cc -Wall -O2 sum.c -o sum</b>.
+<br><br>
+Run it by typing <b>./sum</b> <br><br>
+The program should compute the sum 1+2+3+4 but contains bugs so  it doesn't.
+<br><br>
+The program suffers from <em>undefined behaviour</em> so anything can have
+been printed.<br><br>
+Recompile the program without optimisation: <b>cc sum.c -o sum</b>, and run it.
+<br><br>
+If you got a more sensible output it is not because of a bug in the optimiser in <tt>cc</tt> but due to ''chance''. The program uses an unitialised variable
+which <em>sometimes</em> gets the value zero in the beginning of a program.
+<br><br>
+
+Now compile with debugging information: <b>cc -g sum.c -o sum</b> and type 
+<b>gdb sum</b><br><br>
+
+In gdb, type <b>b main</b> and <b>r</b>. This will run the program
+and stop execution in the function main. 
+<br><br>
+<b>b</b> means <b>breakpoint</b> and <b>r</b> means run.<br><br>
+
+Now type <b>n</b> (meaning <b>next</b>) and hit return. GDB will
+execute the next source code line, and show which line <b>will be</b>
+executed next time.<br><br>
+
+Continue hitting RETURN until GDB prints <tt>Program exited with...</tt>.
+You can see how the program execution proceeds. 
+<br><br>
+
+Hitting RETURN repeats the most recent command (in this case next).
+<br><br>
+Type <b>r</b> again. The program should run and stop when it reaches main.
+<br><br>
+Now type <b>display i RETURN</b> and <b>display sum RETURN</b>.
+<br><br>
+Hit <b>n</b> and RETURN until the program terminates.
+<br><br>
+Display prints all displayed variables when the program stops (eg at the next line).
+<br><br>
+To print a variable only once, you type eg <b>p a</b>. 
+
+<br><br>
+The are two bugs in this program. Find out why the sum becomes 1010 with
+gdb. 
+<br><br>GDB probably does not help you to find why you got a different output
+when using optimisation (ie compiling with -O2). Always test your
+C/C++ programs using the flags <b>-O2 -Wall</b> every now and then
+during development. Do that now:<br>
+<b>cc sum.c -o sum -O2 -Wall</b>.
+<br><br>
+With the warning you should be able to fix the remaining bug.
+The meaning of <b>-Wall</b> is to enable all warnings.
+
+<br><br>Why do you think the compiler could find the error when enable optimisation?
+<br><br>
+
+
+
+<li>Look at the program <tt>watch.c</tt>. Compile and run it. 
+The  value of <b>x</b> is 1000 but due to a bug zero is printed instead.
+
+<br><br>Enter GDB and set up a breakpoint in main and run the program.
+<br><br>Now type <b>watch x</b> and run.
+<br><br>GDB will tell you when the value of <b>x</b>  changes. The
+watch command
+can be <em>very</em> slow but sometimes worthwhile.
+
+<br> <br>
+
+<li>Now compile the program <tt>mozart.c</tt> with debugging info.
+<br> <br>
+The function <b>strcpy(char* destination, char* source)</b> copies
+the string pointed to by source into the memory pointed to by destination.
+<br> <br>
+It is expected that enough memory has been allocated for destination.
+<br> <br>
+The function <b>strncpy(char* destination, char* source, size_t size)</b> 
+copies at most <b>size</b> characters.
+
+<br> <br>
+You might expect the program to print the string <b>mozart</b> and tell 
+you the length is six.
+<br> <br>
+Compile and run the program.
+<br> <br>
+Enter GDB and stop the program in main.
+<br> <br>
+If you type <b>n</b> the program will go to the next line. But you want
+to <b>step</b> into the called function. Do so by typing <b>s</b> and RETURN. 
+<br> <br>
+Use 
+<b>n</b>
+and
+<b>s</b> 
+to first skip <b>strncpy</b> but to step into <b>strlen</b>.
+<br> <br>
+In <b>strlen</b> you can use 
+<b>s</b> 
+and
+<b>display s[i]</b> 
+to step through the loop and what the contents of <b>t</b> is.
+
+<br> <br> It can become tedious to step through arrays or lists like that
+so we will next see an alternative.
+
+
+<br> <br> A simple but effective trick is to change your program by
+<ul>
+<li>Define a new function <b>int bp() {}</b>. Put it anywhere in your program.
+<li>Change the buggy program to call bp() when the variables are interesting, eg
+<b>s[i] == 't'</b> in this case, since <b>'t'</b> is the last character and
+it is there something got wrong.
+</ul>
+Then in GDB you set a breakpoint in <b>bp</b>. Now you can run your
+program at full speed and start debugging when things become interesting.
+<br><br>
+Can you figure out why we we had a problem and explain the output?
+<br><br>
+
+
+<li>GDB can also ''take over'' a running program. Compile <tt>matmul.c</tt>
+and start it in the background:
+<br> <b>cc -g matmul.c -o matmul<br>./matmul&</b>
+<br><br>The shell will print: <b>[1] NUM</b>, where NUM is the so called 
+process id in UNIX. Next enter the following command:
+<br> <b>gdb matmul NUM</b>
+<br><br>You can now do any normal debugging, eg check how far the
+program has come by printing the <b>i</b> variable.
+
+<br><br>Note: there is nothing wrong with the program so don't look for a
+correctness bug, but due to the compiler, the program executes very slowly.
+The purpose is to show you that GDB can take over an executing program.
+
+<br><br>When you exit GDB, the program will continue on its own.
+<br><br>
+
+
+<li>Compile the program <tt>data.c</tt> and enter GDB. You will now
+see how you can examine the contents of memory.
+
+<br><br>Do not run the program!
+<br><br>Type <b>x /c &s</b> and hit return a few times (eg 20). What can you see?
+<br><br>Now type instead <b>x /x &s</b> and hit return a few times. How is
+'A' represented as a hex number?
+
+<br><br>
+<li>Copy the file <tt>intfac.c</tt> to power.ludat.lth.se using the
+command <b>scp intfac.c power.ludat.lth.se:</b> and login to that 
+machine using 
+<b>ssh power.ludat.lth.se</b>.
+<li>On that machine, compile the program <tt>intfac.c</tt> and enter GDB. Put a breakpoint
+in <b>f</b> and run.
+<br><br>When you stop in <b>f</b>. Type the command: <b>x /40i f</b>
+<br><br>GDB now disassembles the program and shows the assembler code.
+<br><br>Give the command <b>display  $pc</b>
+<br><br>Next give the command <b>display /i $pc</b>
+<br><br>and <b>si</b>
+<br><br>The last means single step instruction. Hit return a few times and
+try to understand what the program is doing. The parameter is in R3 and the
+stack pointer is R1.
+
+</ol>
+</html>
