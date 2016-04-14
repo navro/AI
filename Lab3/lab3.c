@@ -96,6 +96,16 @@ void fail6()
 	a[N-1] = 1;
 }
 
+void fail7()
+{
+	int		a;
+	int*		p;
+
+	p = malloc(a);
+
+	free(p);
+}
+
 int main(int argc, char **argv)
 {
 	int	test = 0;
@@ -112,8 +122,8 @@ int main(int argc, char **argv)
 	fail(4);
 	fail(5);
 	fail(6);
+	fail(7);
 
-	puts("lab6 reached the end");
-
+	puts("lab reached the end");
 	exit(0);
 }
