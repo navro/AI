@@ -112,10 +112,16 @@ void* take_out_first(list_t* list)
 	#endif
 
 	#ifdef J
-	succ->succ = free_list->succ;
-	//succ->pred = free_list;
-	//free_list->succ->pred = succ;
-	free_list->succ = succ;
+	if(free_list == NULL)
+	{
+		free_list = succ;
+		succ->succ = NULL;
+	}
+	else
+	{
+		succ->succ = free_list->succ;
+		free_list->succ = succ;
+	}
 	#endif
 
 	return data;
